@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EcmaScript</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+    }
+    .pokemon-list {
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0;
+    }
+    .pokemon {
+      /*border: 1px solid red;*/
+      /*border-radius: 5px;*/
+      padding: 10px;
+      box-sizing: border-box;
+      /*margin: 10px;*/
+      list-style: none;
+      width: 25%;
+      height: 400px;
+      text-align: center;
+      background: white;
+      animation: .3s pokemon;
+
+      position: relative;
+      overflow: hidden;
+    }
+    img {
+      width: 100%;
+    }
+    p {
+      background: white;
+      padding: 5px;
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    @keyframes pokemon {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- <h1>The Pokemon company</h1> -->
+  <ul class="pokemon-list" id="lista">
+
+  </ul>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vibrant.js/1.0.0/Vibrant.min.js"></script>
+  <script>
+    // const pokemonList = [
+    //   {
+    //     name: 'Pikachu',
+    //     type: 'Electrico',
+    //   },
+    //   {
+    //     name: 'Bulbasaur',
+    //     type: 'Planta',
+    //   },
+    //   {
+    //     name: 'Charmander',
+    //     type: 'Fuego'
+    //   },
+    //   {
+    //     name: 'Squirtle',
+    //     type: 'Agua',
+    //   }
+    // ];
+    const lista = document.getElementById('lista');
+
+    // pokemonList.forEach((pokemon) => {
+    //   const $pokemon = document.createElement('li');
+    //   const $pokemonType = document.createElement('p');
+    //   $pokemon.className = 'pokemon';
+    //   $pokemon.textContent = pokemon.name;
+    //   $pokemonType.textContent = pokemon.type;
+    //   $pokemon.append($pokemonType);
+    //   $lista.append($pokemon);
+    // });
+
+    function makePokemon(pokemon) {
+      // Mi pokemon
+      this.pokemon = document.createElement('li');
+      // La imagen
+      this.pokemonSprite = document.createElement('img');
+      // El nombre de nuestro poke
+      this.pokemonName = document.createElement('p');
+
+      // Agregar una clase para usar en CSS
+      this.pokemon.className = 'pokemon';
+
+      // Agregar el texto del nombre
+      this.pokemonName.textContent = `#${pokemon.id} ${pokemon.name}`;
+
+      // Manipular la imagen
+      this.pokemonSprite.setAttribute('crossOrigin', 'anonymous')
+      this.pokemonSprite.setAttribute('src', pokemon.sprites.front_default)
+
+      //Agregar el nombre y la imagen al pokemon
+      this.pokemon.append(this.pokemonSprite);
+      this.pokemon.append(this.pokemonName);
+
+      //Agregar el pokemon al elemento principal
+      lista.append(this.pokemon);
+
+      // Cuando la imagen se muestre en pantallas hagamos esto
+      this.pokemonSprite.onload = () => {
+        const vibrant = new Vibrant(this.pokemonSprite);
+        const colors = vibrant.swatches()
+        this.pokemon.setAttribute('style',
+          `
+          background:
+              linear-gradient(
+                  ${colors.Vibrant.getHex()},
+                  transparent
+              ),
+              linear-gradient(
+                  90deg,
+                  ${colors.LightVibrant.getHex()},
+                  transparent
+              ),
+              linear-gradient(
+                  -90deg,
+                  ${colors.DarkVibrant.getHex()},
+                  transparent
+              );
+          `
+        );
+      }
+    }
+
+    // Llamar a un rango de pokemon
+    function getPokemonList(min, max) {
+      this.min = min;
+      this.max = max;
+      for (let i = min; i <= max; i++) {
+        getPokemon(i);
+      }
+    }
+
+    // function getPokemon(id) {
+    //   fetch(`http://pokeapi.co/api/v2/pokemon/${id}/`).then((response) => {
+    //     response.json().then((data) => {
+    //       makePokemon(data);
+    //     })
+    //   })
+    // }
+
+    // Obtener un pokemon desde el API
+    async function getPokemon(id) {
+      const response = await fetch(`http://pokeapi.co/api/v2/pokemon/${id}/`);
+      const data = await response.json();
+      makePokemon(data);
+    }
+
+    // getPokemonList(10);
+    getPokemonList(140, 155);
+
+  </script>
+</body>
+</html>
